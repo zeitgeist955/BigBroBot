@@ -1,0 +1,28 @@
+{
+  "name": "GenialoBot",
+  "version": "1.0.0",
+  "description": "Bot  de test",
+  "main": "index.js",
+  "author": "ndeman",
+  "dependencies": {
+    "discord.io": "github:woor/discord.io#gateway_v6",
+    "discord.js": "^12.5.3",
+    "quick.db": "^7.1.3",
+    "winston": "^3.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/zeitgeist955/BigBroBot.git"
+  },
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/zeitgeist955/BigBroBot/issues"
+  },
+  "homepage": "https://github.com/zeitgeist955/BigBroBot#readme",
+  "devDependencies": {
+    "eslint": "^8.50.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
