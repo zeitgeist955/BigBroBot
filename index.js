@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
+const { token } = require('./token.json');
 // const guild = ('695119331109109791');
 // const config = require('./config.json');
 // const intents = Discord.Intents.ALL;
