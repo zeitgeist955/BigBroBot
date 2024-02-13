@@ -1,7 +1,13 @@
+const { SlashCommandBuilder } = require('discord.js');
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
+
 module.exports = {
-	name: 'pong',
-	description: 'Pour les revers',
-	execute(message, args) {
-		message.reply('le revers arrive et **SMASH ! GOAAAAAAAAL !!!!**');
+	data: new SlashCommandBuilder()
+		.setName('pong')
+		.setDescription('Pour les revers'),
+
+	async execute(interaction) {
+		interaction.reply('le revers arrive et **SMASH ! GOAAAAAAAAL !!!!**');
 	},
 };
