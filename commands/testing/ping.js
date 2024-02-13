@@ -1,13 +1,17 @@
-const db = require('quick.db');
+const { SlashCommandBuilder } = require('discord.js');
+//const db = require('quick.db');
 
 module.exports = {
-	name: 'ping',
-	description: 'Commande de test simple',
-	execute(message, args) {
-		message.reply('Pong.');
+	data: new SlashCommandBuilder()
+		.setName('ping')
+		.setDescription('Commande de test simple'),
+	execute(interaction) {
+		interaction.reply('Pong.');
 
+		/* Record number of command usage
 		db.add('times.ping', 1);
 		const timesUsed = db.get('times.ping');
-		message.channel.send('This command has been used '+timesUsed+' times!');
+		interaction.channel.send('This command has been used '+timesUsed+' times!');
+		*/
 	},
 };

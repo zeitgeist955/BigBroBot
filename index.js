@@ -1,61 +1,59 @@
-const fs = require('fs');
-const Discord = require('discord.js');
-const { prefix } = require('./config.json');
+const fs = require('node:fs');
+const path = require('node:path');
 const { token } = require('./token.json');
-// const guild = ('695119331109109791');
-// const config = require('./config.json');
-// const intents = Discord.Intents.ALL;
-const laNalGuildId = '559721067590189067';
-const botId = '697841721459081347';
-const botChanId = '688040488019820598';
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { botRadioBoomBoomChanId } = require('./config.json');
 
 // Create a new client instance
-const client = new Discord.Client();
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // When the client is ready, run this code (only once)
-client.once('ready', () => {
-	console.log('Ready!');
+client.once(Events.ClientReady, readyClient => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
 // Log in to Discord with your client's token
 client.login(token);
-client.commands = new Discord.Collection();
-const commandFolders = fs.readdirSync('./commands');
+client.commands = new Collection();
+
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
-	const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const command = require(`./commands/${folder}/${file}`);
+		const filePath = path.join(commandsPath, file);
+		const command = require(filePath);
         // set a new item in the Collection
 	    // with the key as the command name and the value as the exported module
-		client.commands.set(command.name, command);
+		if ('data' in command && 'execute' in command) {
+			client.commands.set(command.data.name, command);
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
 	}
 }
 
-client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) {
-        return;
-    }
+client.on(Events.InteractionCreate, interaction => {
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLocaleLowerCase();
+	if (!interaction.isChatInputCommand()) {
+		return;
+	}
+	//console.log(interaction);
 
-	if (message.channel.id === botChanId) {
+	const command = interaction.client.commands.get(interaction.commandName);
+
+	if (interaction.channelId === botRadioBoomBoomChanId) {
 		//Pour logger des trucs sans flood, uniquement du chan radio boom boom
 		//console.log(message);
 	}
 
-    if (!client.commands.has(commandName)) {
-        return;
-    }
-
-    const command = client.commands.get(commandName);
-
     try {
-		command.execute(message, args);
+		command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		message.reply('there was an error trying to execute that command!');
+		interaction.reply('there was an error trying to execute that command!');
 	}
 });
 
