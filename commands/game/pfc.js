@@ -5,7 +5,24 @@ const db = new QuickDB();
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('pfc')
-        .setDescription('Joue à pierre feuille ciseaux'),
+        .setDescription('Joue à pierre feuille ciseaux')
+        .addSubcommand(subCommand =>
+            subCommand.setName('reset')
+                .setDescription('Reset votre score au PFC avec le bot'))
+        .addSubcommand(subCommand => 
+            subCommand.setName('jouer')
+                .setDescription('Jouer une partie de PFC')
+                .addStringOption(option => 
+                    option.setName('coup')
+                    .setDescription('Choix du coup')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'pierre', value: 'pierre'},
+                        { name: 'feuille', value: 'feuille'},
+                        { name: 'ciseaux', value: 'ciseaux'}
+                    )
+                )
+            ),
 
 	async execute(interaction) {
         const pierre = new Coup('pierre', 'ciseaux', 'feuille');
@@ -14,15 +31,12 @@ module.exports = {
         const possibilites = new Array(pierre, feuille, ciseaux);
 
         const playerName = interaction.user.username;
-        const userChoice = args[0]; //FIXME pass argument to method
+        const userChoice = interaction.options.getString('coup');
         const userCoup = possibilites.find(coup => coup.name === userChoice);
 
-        if (args[0] === 'reset') {
+        if (interaction.options.getSubcommand() === 'reset') {
             resetPlayerData(playerName);
-        }
-        
-        if (!userCoup) {
-            interaction.reply("Impossible d'identifier ton choix de coup, exemple de choix correct : '&pfc ciseaux'");
+            interaction.reply(`reset de ton historique de jeu au PFC !`);
             return;
         }
 
@@ -31,29 +45,27 @@ module.exports = {
         if (botCoup.name === userCoup.name) {
             interaction.reply(`${botCoup.name} ! Égalité !`);
         } else if (botCoup.counter === userCoup.name) {
-            db.add(`pfc.botScoreAgainstPlayer.${playerName}`, 1);
+            await db.add(`pfc.botScoreAgainstPlayer.${playerName}`, 1);
             interaction.reply(`${botCoup.name} ! J'ai gagné !`);
         } else if (botCoup.counteredBy === userCoup.name) {
-            db.add(`pfc.playerScore.${playerName}`, 1);
+            await db.add(`pfc.playerScore.${playerName}`, 1);
             interaction.reply(`${botCoup.name} ! J'ai perdu, bien joué !`);
         }
 
-        const playerScore = db.get(`pfc.playerScore.${playerName}`) || 0;
-        const botScore = db.get(`pfc.botScoreAgainstPlayer.${playerName}`) || 0;
+        const playerScore = await db.get(`pfc.playerScore.${playerName}`) || 0;
+        const botScore = await db.get(`pfc.botScoreAgainstPlayer.${playerName}`) || 0;
         interaction.channel.send(`Score : ${playerName} ${playerScore} - ${botScore} BigBroBot`);
 
-        db.add(`pfc.numberOfGameAgainstPlayer.${playerName}`, 1);
-        const numberOfGameAgainstPlayer = db.get(`pfc.numberOfGameAgainstPlayer.${playerName}`);
+        await db.add(`pfc.numberOfGameAgainstPlayer.${playerName}`, 1);
+        const numberOfGameAgainstPlayer = await db.get(`pfc.numberOfGameAgainstPlayer.${playerName}`) || 0;
         interaction.channel.send(`Nombre de parties jouées par ${playerName} : ${numberOfGameAgainstPlayer}`);
-        
 	},
 };
 
-function resetPlayerData(playerName) {
-    db.delete(`pfc.botScoreAgainstPlayer.${playerName}`);
-    db.delete(`pfc.playerScore.${playerName}`);
-    db.delete(`pfc.numberOfGameAgainstPlayer.${playerName}`);
-    interaction.reply(`reset de ton historique de jeu au PFC !`);
+async function resetPlayerData(playerName) {
+    await db.delete(`pfc.botScoreAgainstPlayer.${playerName}`);
+    await db.delete(`pfc.playerScore.${playerName}`);
+    await db.delete(`pfc.numberOfGameAgainstPlayer.${playerName}`);
     return;
 }
 
