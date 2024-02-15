@@ -9,8 +9,8 @@ Docu d'API discord v14 : https://discordjs.guide/
 Liste d'idées de features à développer :
 - Commande pour join vocal / lancer une soundboard / se déco du vocal
 - Quizz/trivia bot -> CF "trivia bot"
-- Interfaçage ChatGPT
-- Interfaçage IA de générateur d'image
+- Interfaçage ChatGPT (API payante)
+- Interfaçage IA de générateur d'image (à voir si une API gratuite existe)
 - Auto reminder à une date ou un événement particulier
 - Hébergement du bot pour qu'il soit dispo h24
 - Interfaçage Spotify/Youtube pour gérer des playlists
