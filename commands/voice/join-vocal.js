@@ -1,8 +1,6 @@
 const { joinVoiceChannel } = require('@discordjs/voice');
 const { SlashCommandBuilder, ChannelType } = require('discord.js');
 
-
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('join-vocal')
