@@ -44,11 +44,6 @@ client.on(Events.InteractionCreate, interaction => {
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
-	if (interaction.channelId === botRadioBoomBoomChanId) {
-		//Pour logger des trucs sans flood, uniquement du chan radio boom boom
-		//console.log(message);
-	}
-
     try {
 		command.execute(interaction);
 	} catch (error) {
