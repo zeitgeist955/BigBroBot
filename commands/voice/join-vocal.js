@@ -1,12 +1,11 @@
 const { joinVoiceChannel } = require('@discordjs/voice');
 const { SlashCommandBuilder, ChannelType } = require('discord.js');
-const config = require('../../config.json');
 
 
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('join')
+		.setName('join-vocal')
 		.setDescription('Demande au bot de se connecter sur un channel vocal du serveur au choix')
 		.addChannelOption((option) => option.setName('channel').setDescription('Le channel vocal à rejoindre').setRequired(true).addChannelTypes(ChannelType.GuildVoice)),
 
@@ -20,4 +19,4 @@ module.exports = {
 
 		interaction.reply('Connexion au channel réussi');
 	},
-};
+	};
